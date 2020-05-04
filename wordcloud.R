@@ -18,7 +18,7 @@ neg_confidenceNumber <-  airplaneData$negativereason.confidence
 # Scatter Plot Creation
 
 
-
+plot(d,d)
 
 
 
@@ -48,8 +48,32 @@ generalTweets <- tm_map(generalTweets, stripWhitespace)
 dtm <- TermDocumentMatrix(generalTweets)
 m <- as.matrix(dtm)
 v <- sort(rowSums(m),decreasing=TRUE)
-d <- data.frame(word = names(v),freq=v)
-head(d, 10)
+generalFreq <- data.frame(word = names(v),freq=v)
+head(generalFreq, 10)
+
+############################################################
+#Negative Word COUNT
+# Getting word count for negativeWords
+negativeWordCount<- Corpus(VectorSource(negativeWords))
+# Convert the text to lower case
+generalTweets <- tm_map(generalTweets, content_transformer(tolower))
+# Remove numbers
+generalTweets <- tm_map(negativeWordCount, removeNumbers)
+# Remove english common stopwords
+generalTweets <- tm_map(negativeWordCount, removeWords, stopwords("english"))
+# Remove your own stop word
+# specify your stopwords as a character vector
+generalTweets <- tm_map(negativeWordCount, removeWords, c("blabla1", "blabla2"))
+# Remove punctuations
+generalTweets <- tm_map(negativeWordCount, removePunctuation)
+# Eliminate extra white spaces
+generalTweets <- tm_map(negativeWordCount, stripWhitespace)
+
+dtm <- TermDocumentMatrix(negativeWordCount)
+m <- as.matrix(dtm)
+v <- sort(rowSums(m),decreasing=TRUE)
+negativeFreq <- data.frame(word = names(v),freq=v)
+head(negativeFreq, 10)
 
 wordcloud(words = d$word, freq = d$freq,min.freq = 1,
           max.words=200, random.order=FALSE, rot.per=0.35,
@@ -84,4 +108,4 @@ text(x, y = NULL, labels = seq_along(x$x), adj = NULL,
 text(3,1,labels="Negative Words")
 
 confidenceNumbers <- airplaneData[ , c("airline_sentiment.confidence", "negativereason.confidence")]
-tweetandReason <- airplaneData[ , c("text", "airline_sentiment")]  
+tweetandReason <- airplaneData[ , c("text", "airline_sentiment")]
