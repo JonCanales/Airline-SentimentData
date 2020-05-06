@@ -1,9 +1,13 @@
+# 21:198:220 Fundamentals of Data Visualization, Spring 2020
+# Final Project
+# Jonathan Canales, jac835
+
 library("tm")
 library("SnowballC")
 library("wordcloud")
 library("RColorBrewer")
 library("wordcloud2")
-library(plyr)
+library("plyr")
 
 # loading in data
 airplaneData <- read.csv("/Users/jonathancanales/Desktop/FinalProjectR/Airline.csv")
@@ -16,121 +20,8 @@ negativeWords <- airplaneData$negativereason
 neg_confidenceNumber <-  airplaneData$negativereason.confidence
 
 
-# Scatter Plot Creation
 
-
-
-
-
-
-# Word Plot
-generalTweets <- Corpus(VectorSource(tweets))
-
-toSpace <- content_transformer(function (x , pattern ) gsub(pattern, " ", x))
-generalTweets <- tm_map(generalTweets, toSpace, "/")
-generalTweets <- tm_map(generalTweets, toSpace, "@")
-generalTweets <- tm_map(generalTweets, toSpace, "\\|")
-
-
-# Convert the text to lower case
-generalTweets <- tm_map(generalTweets, content_transformer(tolower))
-# Remove numbers
-generalTweets <- tm_map(generalTweets, removeNumbers)
-# Remove english common stopwords
-generalTweets <- tm_map(generalTweets, removeWords, stopwords("english"))
-# Remove your own stop word
-# specify your stopwords as a character vector
-generalTweets <- tm_map(generalTweets, removeWords, c("blabla1", "blabla2"))
-# Remove punctuations
-generalTweets <- tm_map(generalTweets, removePunctuation)
-# Eliminate extra white spaces
-generalTweets <- tm_map(generalTweets, stripWhitespace)
-
-dtm <- TermDocumentMatrix(generalTweets)
-m <- as.matrix(dtm)
-v <- sort(rowSums(m),decreasing=TRUE)
-generalFreq <- data.frame(word = names(v),freq=v)
-head(generalFreq, 10)
-
-############################################################
-#Negative Word COUNT
-# Getting word count for negativeWords
-negativeWordCount<- Corpus(VectorSource(negativeWords))
-# Convert the text to lower case
-generalTweets <- tm_map(generalTweets, content_transformer(tolower))
-# Remove numbers
-generalTweets <- tm_map(negativeWordCount, removeNumbers)
-# Remove english common stopwords
-generalTweets <- tm_map(negativeWordCount, removeWords, stopwords("english"))
-# Remove your own stop word
-# specify your stopwords as a character vector
-generalTweets <- tm_map(negativeWordCount, removeWords, c("blabla1", "blabla2"))
-# Remove punctuations
-generalTweets <- tm_map(negativeWordCount, removePunctuation)
-# Eliminate extra white spaces
-generalTweets <- tm_map(negativeWordCount, stripWhitespace)
-
-dtm <- TermDocumentMatrix(negativeWordCount)
-m <- as.matrix(dtm)
-v <- sort(rowSums(m),decreasing=TRUE)
-negativeFreq <- data.frame(word = names(v),freq=v)
-head(negativeFreq, 10)
-
-wordcloud(words = d$word, freq = d$freq,min.freq = 1,
-          max.words=200, random.order=FALSE, rot.per=0.35,
-          colors=brewer.pal(8, "Dark2"))
-
-
-# making axis
-par(mai = c(1,1,1,1))
-
-plot(x = NULL,
-     y = NULL,
-     xlim = c(0,6),
-     # Each histograph covers half of each other except for the top one. You add .5 to get enough space for
-     # The top one to get enough space.
-     ylim = c(-1,5),
-     ann = FALSE,
-     axes = FALSE)
-
-xticks <- seq(0,6,3)
-# Same as ylim
-yticks <- seq(-1,5,1)
-axis(1, at = xticks, tck = .01, lab = F, lwd = 2)
-axis(2, at = yticks,tck = .01, lab = F, lwd = 2)
-axis(3, at = xticks,tck = .01, lab = F, lwd = 2)
-axis(4, at = yticks,tck = .01, lab = F, lwd = 2)
-
-title(main="main title", sub="sub-title",
-   xlab="x-axis label", ylab="y-axis label")
-
-mtext("Neutral",1,at=3)
-mtext("Postive",1,at = 1)
-mtext("Negative",1,at=6)
-
-
-text(x, y = NULL, labels = seq_along(x$x), adj = NULL,
-         pos = NULL, offset = 0.5, vfont = NULL,
-         cex = 1, col = NULL, font = NULL, ...)
-
-
-text(3,1,labels="Negative Words")
-
-confidenceNumbers <- airplaneData[ , c("airline_sentiment.confidence", "negativereason.confidence")]
-tweetandReason <- airplaneData[ , c("text", "airline_sentiment")]
-
-
-########
-# Linear Regression with glm Function
-glm(airlineSentiment ~ Factor 1 + factor 2, family = “binomial”)
-
-
-
-
-
-
-
-###### Getting SPecific Airline Data
+###### Getting Specific Airline Data
 united <- airplaneData[airplaneData$airline == "United",]
 virginAmerica <- airplaneData[airplaneData$airline == "Virgin America",]
 southWest <- airplaneData[airplaneData$airline == "Southwest",]
@@ -150,8 +41,8 @@ american$negativereason
 united$airline_sentiment
 
 
-
-library(plyr)
+# Variable Creation
+# Using library(plyr) for the count() function to get frequencies
 countofUnited <- count(united$airline_sentiment)
 countofVirginAmerica <- count(virginAmerica$airline_sentiment)
 countofSouthWest <- count(southWest$airline_sentiment)
@@ -164,7 +55,87 @@ countofAmerican <- count(american$airline_sentiment)
  USAirFreq <- countofUSAir$freq
  AmericanFreq <- countofAmerican$freq
 
+##### BAR GRAPH CODE BELOW
+ # Gives me a canvas thats side by side for my graphs
+ par(mfcol = c(1,2))
+# Getting Colors I need to use
+coul <- brewer.pal(5, "Set3")
+out <- barplot(dataToPlot,beside=TRUE,col=c("#FB8072","#FFFFB3","#8DD3C7"),axes = TRUE,axisnames=FALSE,horiz=TRUE)
+axis(2,at=2.5,labels="United",horiz=TRUE,tck=FALSE)
+axis(2,at=6.5,labels="Virgin America",horiz=TRUE,tck=FALSE)
+axis(2,at=10.5,labels="US Airline",horiz=TRUE,tck=FALSE)
+axis(2,at=14.5,labels="American Airlines",horiz=TRUE,tck=FALSE)
+axis(1,at=1200,labels=)
+mtext('Frequency Of Sentiment Rating', side=1, line=3.5, at=1200)
+# Legend Creation
+legend("topright", inset=.02, title="Airline Sentiment Ratings",
+      c("Negative","Neutral","Postive"), fill=c("#FB8072","#FFFFB3","#8DD3C7"), horiz=TRUE, cex=0.8)
 
 
-coul <- brewer.pal(5, "Set2")
-out <- barplot(dataToPlot,beside=TRUE,col=c("Red","Grey","Blue"))
+
+
+#### WORLD CLOUD CODE BELOW
+
+# Cleaning Data for WordCloud
+# Word Plot
+generalTweets <- Corpus(VectorSource(tweets))
+
+toSpace <- content_transformer(function (x , pattern ) gsub(pattern, " ", x))
+generalTweets <- tm_map(generalTweets, toSpace, "/")
+generalTweets <- tm_map(generalTweets, toSpace, "@")
+generalTweets <- tm_map(generalTweets, toSpace, "\\|")
+generalTweets <- tm_map(generalTweets, toSpace, "the")
+generalTweets <- tm_map(generalTweets, toSpace, "and")
+generalTweets <- tm_map(generalTweets, toSpace, "you")
+generalTweets <- tm_map(generalTweets, toSpace, "your")
+
+
+# Convert the text to lower case
+generalTweets <- tm_map(generalTweets, content_transformer(tolower))
+# Remove numbers
+generalTweets <- tm_map(generalTweets, removeNumbers)
+# Remove english common stopwords
+generalTweets <- tm_map(generalTweets, removeWords, stopwords("english"))
+# Remove your own stop word
+# specify your stopwords as a character vector
+generalTweets <- tm_map(generalTweets, removeWords, c("blabla1", "blabla2"))
+# Remove punctuations
+generalTweets <- tm_map(generalTweets, removePunctuation)
+# Eliminate extra white spaces
+generalTweets <- tm_map(generalTweets, stripWhitespace)
+
+
+dtm <- TermDocumentMatrix(generalTweets)
+m <- as.matrix(dtm)
+v <- sort(rowSums(m),decreasing=TRUE)
+generalFreq <- data.frame(word = names(v),freq=v)
+head(generalFreq, 10)
+
+# plotting WordCloud
+wordcloud(words = generalFreq$word, freq = generalFreq$freq,min.freq = 1,
+          max.words=200, random.order=FALSE, rot.per=0.35,
+          colors=brewer.pal(1, "Set3"))
+
+############################################################
+  #Negative Word COUNT if needed
+  # Getting word count for negativeWords
+  negativeWordCount<- Corpus(VectorSource(negativeWords))
+  # Convert the text to lower case
+  generalTweets <- tm_map(generalTweets, content_transformer(tolower))
+  # Remove numbers
+  generalTweets <- tm_map(negativeWordCount, removeNumbers)
+  # Remove english common stopwords
+  generalTweets <- tm_map(negativeWordCount, removeWords, stopwords("english"))
+  # Remove your own stop word
+  # specify your stopwords as a character vector
+  generalTweets <- tm_map(negativeWordCount, removeWords, c("blabla1", "blabla2"))
+  # Remove punctuations
+  generalTweets <- tm_map(negativeWordCount, removePunctuation)
+  # Eliminate extra white spaces
+  generalTweets <- tm_map(negativeWordCount, stripWhitespace)
+
+  dtm <- TermDocumentMatrix(negativeWordCount)
+  m <- as.matrix(dtm)
+  v <- sort(rowSums(m),decreasing=TRUE)
+  negativeFreq <- data.frame(word = names(v),freq=v)
+  head(negativeFreq, 10)
