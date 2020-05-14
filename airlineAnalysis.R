@@ -1,11 +1,11 @@
-# loading in libraries 
+# loading in libraries
 library("tm")
 library("SnowballC")
 library("wordcloud")
 library("RColorBrewer")
 library("wordcloud2")
 library("plyr")
-library(pracma)
+library("pracma")
 
 # Frequency Function Recleaning Code here too Just in case.
 getWordFreq <- function(text){
