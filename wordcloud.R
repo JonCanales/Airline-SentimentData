@@ -55,6 +55,9 @@ countofAmerican <- count(american$airline_sentiment)
  USAirFreq <- countofUSAir$freq
  AmericanFreq <- countofAmerican$freq
 
+
+ dataToPlot <-
+
 ##### BAR GRAPH CODE BELOW
  # Gives me a canvas thats side by side for my graphs
  par(mfcol = c(1,2))
